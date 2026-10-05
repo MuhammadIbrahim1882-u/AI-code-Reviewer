@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Code Reviewer</title>
+  <meta name="theme-color" content="#5b5bf0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-tab="code">
+<div id="splash" class="splash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg><b>Code Reviewer</b></div>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+      <span>Code Reviewer</span>
+    </div>
+    <button id="newReview" class="new-btn" type="button">+ New review</button>
+    <div class="side-label">Recent reviews</div>
+    <nav id="history" class="history" aria-label="Recent reviews"></nav>
+    <div class="side-foot">
+      <button id="install" class="side-link install" type="button" hidden>Install app</button>
+      <button id="clearHistory" class="side-link" type="button">Clear history</button>
+      <button id="theme" class="side-link" type="button">Switch theme</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h1>Review your code</h1>
+        <p>Paste code and get the bugs, risks and fixes a senior engineer would flag.</p>
+      </div>
+      <span class="hint"><kbd>Ctrl</kbd> <kbd>Enter</kbd> to review</span>
+    </header>
+
+    <main class="layout">
+      <section class="panel editor-panel" aria-label="Code input" id="dropzone">
+        <div class="panel-head">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-title">untitled</span>
+          <label for="language" class="sr">Language</label>
+          <select id="language">
+            <option value="auto">Auto-detect</option>
+            <option>Python</option><option>JavaScript</option><option>TypeScript</option>
+            <option>Java</option><option>C</option><option>C++</option><option>C#</option>
+            <option>Go</option><option>Rust</option><option>PHP</option><option>SQL</option>
+          </select>
+          <button id="upload" class="ghost" type="button">Open file</button>
+          <button id="sample" class="ghost" type="button">Sample</button>
+          <button id="clear" class="ghost" type="button">Clear</button>
+          <input id="file" type="file" hidden>
+        </div>
+        <div class="editor">
+          <pre id="gutter" aria-hidden="true">1</pre>
+          <textarea id="code" wrap="off" spellcheck="false" placeholder="Paste your code here, or drop a file onto this panel."></textarea>
+          <div class="drop-hint" id="dropHint">Drop file to load</div>
+        </div>
+        <div class="panel-foot">
+          <span id="count">0 lines · 0 characters</span>
+          <button id="review" class="primary" type="button">Review code</button>
+        </div>
+      </section>
+
+      <section class="panel results-panel" aria-label="Review results">
+        <div class="panel-head">
+          <span class="panel-title">Review</span>
+          <div id="filters" class="filters" hidden role="group" aria-label="Filter issues">
+            <button class="chip active" data-f="all" type="button">All</button>
+            <button class="chip" data-f="bug" type="button">Bugs</button>
+            <button class="chip" data-f="warning" type="button">Warnings</button>
+            <button class="chip" data-f="suggestion" type="button">Suggestions</button>
+          </div>
+        </div>
+        <div class="results-body" aria-live="polite">
+          <div id="empty" class="empty">
+            <svg viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 22h24M20 32h24M20 42h14"/></svg>
+            <h2>Ready when you are</h2>
+            <p>Add some code and select <b>Review code</b>. Findings appear here with a score and fixes you can copy.</p>
+          </div>
+          <div id="loading" class="skeletons" hidden>
+            <div class="sk sk-head"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+            <p class="loading-text">Reviewing your code...</p>
+          </div>
+          <div id="error" class="error" hidden role="alert"></div>
+          <div id="output" hidden>
+            <div class="overview">
+              <div class="score">
+                <svg viewBox="0 0 80 80" width="84" height="84" aria-hidden="true">
+                  <circle cx="40" cy="40" r="34" class="ring-bg"/>
+                  <circle id="ring" cx="40" cy="40" r="34" class="ring" transform="rotate(-90 40 40)"/>
+                </svg>
+                <div class="score-num"><strong id="scoreNum">0</strong><span>score</span></div>
+              </div>
+              <div class="overview-text">
+                <p id="summary" class="summary"></p>
+                <div id="tally" class="tally"></div>
+              </div>
+            </div>
+            <div id="issues"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="statusbar"><span class="dot" id="dot"></span><span id="status">Ready</span></footer>
+  </div>
+</div>
+<nav class="tabbar" aria-label="Views">
+  <button class="tab active" data-tab="code" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg>Code</button>
+  <button class="tab" data-tab="review" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Review</button>
+</nav>
+<div id="toast" class="toast" role="status"></div>
+<script src="script.js"></script>
+</body>
+</html>

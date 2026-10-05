@@ -1,0 +1,14 @@
+{
+  "name": "AI Code Reviewer",
+  "short_name": "Code Reviewer",
+  "description": "Paste code, get bugs and fixes from an LLM",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1024",
+  "theme_color": "#5b5bf0",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
